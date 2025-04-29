@@ -27,13 +27,11 @@ devices = AudioUtilities.GetSpeakers()
 interface = devices.Activate(
     IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
 volume = interface.QueryInterface(IAudioEndpointVolume)
-# volume.GetMute()
 currentVol = volume.GetMasterVolumeLevel() # Başlangıçta mevcut ses düzeyini oku
 volRange = volume.GetVolumeRange()
 volume.SetMasterVolumeLevel(0.0, None)
 minVol = volRange[0]
 maxVol = volRange[1]
-vol = 0
 volBar = 400
 volPer = 0
 
