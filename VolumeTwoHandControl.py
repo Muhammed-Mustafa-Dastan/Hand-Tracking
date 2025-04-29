@@ -37,7 +37,6 @@ vol = 0
 volBar = 400
 volPer = 0
 
-
 while True:
     success, img = cap.read()
     img = detector.findHands(img, draw=False)
@@ -51,7 +50,6 @@ while True:
     lm2 = detector.findPosition(img, handNo=1, draw=False) if numHands >= 2 else []
     
     if lm1 and lm2:
-        
         # 1. elin başparmak ve işaret parmağı uçları
         x1, y1 = lm1[4][1], lm1[4][2]
         x2, y2 = lm1[8][1], lm1[8][2]
@@ -85,36 +83,31 @@ while True:
         
         cv2.line(img, (cx1, cy1), (cx2, cy2), (255, 0, 255), 2)
         cv2.circle(img, (cx3, cy3), 8, (255, 0, 255), cv2.FILLED)
-        
-        length = math.hypot(x2 - x1, y2 - y1)
-        print(length)
 
-        # Hand range 50 - 300
-        # Volume range -65 - 0
-        
-        vol = np.interp(length, [50, 300], [minVol, maxVol])
-        volBar = np.interp(length, [50, 300], [400, 150])
-        volPer = np.interp(length, [50, 300], [0, 100])
-        volume.SetMasterVolumeLevel(vol, None)
-        print(int(length), vol)
-
-        # Ses kontrolü sadece ilk el pinch1 True iken aktif
         if pinch1:
+            # İki parmağın midpoint'i
             cv2.circle(img, (cx1, cy1), 10, (0, 255, 0), cv2.FILLED)
-            # Bu mesafeyi ses dB aralığına eşle
-            volTarget = np.interp(midDist,
-                                  [minMidDist, maxMidDist],
-                                  [minVol, maxVol])
 
-            # Hangi hızda güncellenecek?
+            # Eller arası mesafe
+            midDist = math.hypot(cx2 - cx1, cy2 - cy1)
+
+            # Mesafeyi hedef volume'a eşle
+            volTarget = np.interp(midDist, [minMidDist, maxMidDist], [minVol, maxVol])
+
+            # Pinch2 kontrolü
             if pinch2:
                 alpha = slowAlpha
                 cv2.circle(img, (cx2, cy2), 10, (0, 255, 0), cv2.FILLED)
             else:
                 alpha = fastAlpha
-            # Mevcut sesi hedefe α kadar yaklaştır
+
+            # Yavaş veya hızlı şekilde currentVol'ü volTarget'a yaklaştır
             currentVol += (volTarget - currentVol) * alpha
             volume.SetMasterVolumeLevel(currentVol, None)
+
+            # Ses barı ve yüzdesi için
+            volBar = np.interp(currentVol, [minVol, maxVol], [400, 150])
+            volPer = np.interp(currentVol, [minVol, maxVol], [0, 100])
 
     cv2.rectangle(img, (50, 150), (85, 400), (0, 255, 0), 2)
     cv2.rectangle(img, (50, int(volBar)), (85, 400), (0, 255, 0), cv2.FILLED)
