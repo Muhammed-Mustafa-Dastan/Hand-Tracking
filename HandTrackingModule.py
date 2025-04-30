@@ -35,6 +35,26 @@ class handDetector():
                 if draw:
                     cv2.circle(img, (cx, cy), 10, (255, 0, 255), cv2.FILLED)
         return lmList
+    def findMultipleHandsPositions(self, img, draw=True):
+        lmLists = []
+        if self.results.multi_hand_landmarks:
+            for handLms in self.results.multi_hand_landmarks:
+                lmList = []
+                for id, lm in enumerate(handLms.landmark):
+                    h, w, c = img.shape
+                    cx, cy = int(lm.x * w), int(lm.y * h)
+                    lmList.append((id, cx, cy))
+                lmLists.append(lmList)
+
+                if draw:
+                    self.mpDraw.draw_landmarks(img, handLms, self.mpHands.HAND_CONNECTIONS)
+        return lmLists
+    def handType(self, lmList):
+        # Baş parmak yönüne göre el tipi tahmini (sağ/sol)
+        if lmList[17][1] < lmList[5][1]:
+            return "Right"
+        else:
+            return "Left"
 
 def main():
     pTime = 0
