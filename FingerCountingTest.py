@@ -24,27 +24,27 @@ while True:
 
     if lmLists:
         for lmList in lmLists:
+            handType = detector.handType(lmList)
             fingers = []
 
-            # El tipi tespiti (Thumb yönü için)
-            handType = detector.handType(lmList)  # "Right" or "Left"
-
-            # Baş parmak kontrolü (el tipine göre yön değişir)
+            # Baş parmak
             if handType == "Right":
-                fingers.append(1 if lmList[tipIds[0]][1] > lmList[tipIds[0] - 1][1] else 0)
+                fingers.append(1 if lmList[4][1] > lmList[3][1] else 0)
             else:
-                fingers.append(1 if lmList[tipIds[0]][1] < lmList[tipIds[0] - 1][1] else 0)
+                fingers.append(1 if lmList[4][1] < lmList[3][1] else 0)
 
-            # Diğer parmaklar
-            for id in range(1, 5):
-                fingers.append(1 if lmList[tipIds[id]][2] < lmList[tipIds[id] - 2][2] else 0)
+            # Diğer 4 parmak
+            for tipId in [8, 12, 16, 20]:
+                fingers.append(1 if lmList[tipId][2] < lmList[tipId - 2][2] else 0)
 
-            totalFingers = fingers.count(1)
-            print(f"El: {handType}, Sayı: {totalFingers}")
+            # gesture'a göre sayı belirle
+            number = detector.detect_number(fingers)
+            print("Gesture:", fingers, "Tahmin:", number)
 
-            if 0 <= totalFingers < len(overlayList):
-                h, w, c = overlayList[totalFingers].shape
-                img[0:h, 0:w] = overlayList[totalFingers]
+            if number < len(overlayList):
+                h, w, c = overlayList[number].shape
+                img[0:h, 0:w] = overlayList[number]
+
 
     cTime = time.time()
     fps = 1 / (cTime - pTime)

@@ -55,6 +55,32 @@ class handDetector():
             return "Right"
         else:
             return "Left"
+    def detect_number(finger_states):
+        """
+        finger_states: [thumb, index, middle, ring, pinky]
+        return: sayı (1-9 arası gesture'a göre)
+        """
+        # Örnek gesture kuralları (senin resimlerine göre yazıldı)
+        if finger_states == [1, 0, 0, 0, 0]:
+            return 1
+        elif finger_states == [1, 1, 0, 0, 0]:
+            return 2
+        elif finger_states == [1, 1, 1, 0, 0]:
+            return 3
+        elif finger_states == [1, 1, 1, 1, 0]:
+            return 4
+        elif finger_states == [1, 1, 1, 1, 1]:
+            return 5
+        elif finger_states == [1, 0, 0, 0, 1]:
+            return 6
+        elif finger_states == [1, 1, 0, 0, 1]:
+            return 7
+        elif finger_states == [1, 1, 1, 0, 1]:
+            return 8
+        elif finger_states == [1, 1, 1, 1, 1]:  # aynı gesture hem 5 hem 9 olmasın diye ayırt etmeliyiz
+            return 9  # bu durumda gesture kombinasyonu dışında başka kontrol eklemen gerekir
+        else:
+            return 0  # tanımsız gesture
 
 def main():
     pTime = 0
