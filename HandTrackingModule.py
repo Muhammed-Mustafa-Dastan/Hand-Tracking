@@ -55,6 +55,7 @@ class handDetector():
             return "Right"
         else:
             return "Left"
+    @staticmethod
     def detect_number(finger_states):
         """
         finger_states: [thumb, index, middle, ring, pinky]

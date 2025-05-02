@@ -28,7 +28,7 @@ while True:
             fingers = []
 
             # Baş parmak
-            if handType == "Right":
+            if handType == "Left":
                 fingers.append(1 if lmList[4][1] > lmList[3][1] else 0)
             else:
                 fingers.append(1 if lmList[4][1] < lmList[3][1] else 0)
